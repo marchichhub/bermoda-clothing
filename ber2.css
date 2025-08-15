@@ -110,10 +110,10 @@ a {
 /* On mobile, sidebar overlays */
 @media (max-width: 768px) {
     .sidebar {
-        transform: translateX(-100%);
+        transform: translateX(-10%);
     }
     .sidebar.hidden {
-        transform: translateX(-100%);
+        transform: translateX(-10%);
     }
     .content,
     .products-grid {
@@ -259,4 +259,5 @@ a {
         grid-template-columns: 1fr;
     }
 }
+
 
