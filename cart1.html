@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart</title>
+    <link rel="stylesheet" href="ber2.css">
+    <script src="ber2.js" defer></script>
+</head>
+<body>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="top-left">
+            <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+            <img src="logo.jpg" alt="Logo">
+            <input type="text" class="search-box" placeholder="Search...">
+        </div>
+        <div class="cart-icon" onclick="toggleCart()">
+            🛒 <span id="cart-count">0</span>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar hidden" id="sidebar">
+        <h2>Menu</h2>
+        <a href="ber2.html">Home</a>
+        <a href="shirts.html">Shirts</a>
+        <a href="pants.html">Pants</a>
+        <a href="shoes.html">Shoes</a>
+        <a href="hats.html">Hats</a>
+        <a href="cart1.html">View Cart</a>
+    </div>
+
+    <!-- Cart Content -->
+    <div class="content" style="padding:100px 20px 20px 20px;max-width:800px;margin:auto;">
+        <h1>Your Shopping Cart</h1>
+        <div id="cart-items"></div>
+
+        <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap;">
+            <a href="ber2.html" style="flex:1;min-width:150px;background:#ccc;color:#000;padding:10px;text-align:center;border-radius:6px;">⬅ Back to Shop</a>
+            <a href="checkout.html" style="flex:1;min-width:150px;background:#FFD700;color:#000;padding:10px;text-align:center;border-radius:6px;">Complete Your Order</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', loadCart);
+    </script>
+
+</body>
+</html>

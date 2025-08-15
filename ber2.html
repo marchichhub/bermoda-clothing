@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bermoda Clothing - Home</title>
+    <link rel="stylesheet" href="ber2.css">
+    <style>
+        .top-bar {background: white;display: flex;align-items: center;justify-content: space-between;padding: 10px 20px;position: fixed;top: 0;left: 250px;width: calc(100% - 200px);z-index: 1000;box-shadow: 0 2px 8px rgba(0,0,0,0.1);}
+        .top-left {display: flex;align-items: center;gap: 10px;}
+        .top-bar img {height: 40px;width: 40px;border-radius: 50%;border: 2px solid #ddd;}
+        .search-box {padding: 6px 10px;border: 1px solid #ccc;border-radius: 20px;font-size: 14px;width: 160px;}
+        .products-grid {display: grid;grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));gap: 20px;padding: 20px;}
+        .card {background: white;padding: 10px;border-radius: 8px;box-shadow: 0 2px 8px rgba(0,0,0,0.1);text-align: center;}
+        .card img {width: 100%;height: 150px;object-fit: cover;border-radius: 5px;}
+        .size-options, .color-options {margin-top: 8px;display: none;}
+        .size-options button, .color-options button {margin: 3px;padding: 6px 10px;border: 1px solid #aaa;border-radius: 20px;background: linear-gradient(180deg, #fff, #f1f1f1);cursor: pointer;transition: all 0.2s ease-in-out;}
+        .size-options button:hover, .color-options button:hover {background: #ddd;}
+        .selected {border: 2px solid #007BFF !important;background: #cce5ff !important;}
+      
+    </style>
+</head>
+<body class="home-page">
+    <div class="top-bar">
+        <div class="top-left">
+            <img src="logo.jpg" alt="Logo">
+            <input type="text" class="search-box" placeholder="Search...">
+        </div>
+        <div class="cart-icon" id="cart-icon">🛒 <span id="cart-count">0</span></div>
+    </div>
+    <div class="sidebar" id="sidebar">
+        <h2>Menu</h2>
+        <a href="ber2.html">Home</a>
+        <a href="shirts.html">Shirts</a>
+        <a href="pants.html">Pants</a>
+        <a href="shoes.html">Shoes</a>
+        <a href="hats.html">Hats</a>
+        <a href="cart1.html">View Cart</a>
+        <script>
+    function toggleSidebar() {
+      document.getElementById("sidebar").classList.toggle("collapsed");
+    }
+  </script>
+    </div>
+
+    <div class="cart-panel" id="cart-panel">
+        <h3>Your Cart</h3>
+        <div id="cart-items"></div>
+    </div>
+
+    <div class="content" style="margin-top:60px;">
+        <h1>Featured Products</h1>
+        <div class="products-grid">
+            <script>
+                for (let i = 1; i <= 15; i++) {
+                    document.write(`
+                        <div class="card">
+                            <img src="shirt${i}.png" alt="product${i}">
+                            <div class="card-text">${99 + i} DH</div>
+                            <div class="size-options">
+                                <button onclick="selectOption(this, 'size')">S</button>
+                                <button onclick="selectOption(this, 'size')">M</button>
+                                <button onclick="selectOption(this, 'size')">L</button>
+                                <button onclick="selectOption(this, 'size')">XL</button>
+                            </div>
+                            <div class="color-options">
+                                <button style="background:black;color:white;" onclick="selectOption(this, 'color')">Black</button>
+                                <button style="background:white;border:1px solid #ccc;" onclick="selectOption(this, 'color')">White</button>
+                                <button style="background:red;color:white;" onclick="selectOption(this, 'color')">Red</button>
+                                <button style="background:blue;color:white;" onclick="selectOption(this, 'color')">Blue</button>
+                            </div>
+                            <button class="add-to-cart" onclick="showOptions(this)" data-name="Product ${i}" data-price="${99 + i} DH">Add to Cart</button>
+                        </div>
+                    `);
+                }
+            </script>
+        </div>
+    </div>
+
+    <script>
+        function showOptions(button) {
+            const card = button.closest('.card');
+            card.querySelector('.size-options').style.display = 'block';
+            card.querySelector('.color-options').style.display = 'block';
+            button.textContent = 'Confirm Selection';
+            button.onclick = function() {
+                const size = card.querySelector('.size-options .selected')?.textContent;
+                const color = card.querySelector('.color-options .selected')?.textContent;
+                if (!size || !color) {
+                    alert('Please select size and color before adding to cart');
+                    return;
+                }
+                let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                // Merge with existing same product if size and color match
+                let existing = cart.find(p => p.name === button.dataset.name && p.size === size && p.color === color);
+                if (existing) {
+                    existing.quantity = (existing.quantity || 1) + 1;
+                } else {
+                    cart.push({name: button.dataset.name, price: button.dataset.price, size, color, quantity: 1});
+                }
+                localStorage.setItem('cart', JSON.stringify(cart));
+                alert(`${button.dataset.name} (${size}, ${color}) added to cart!`);
+                updateCartCount();
+            }
+        }
+
+        function selectOption(btn, type) {
+            const container = btn.parentElement;
+            container.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+        }
+
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            let totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+            document.getElementById('cart-count').textContent = totalItems;
+        }
+
+        updateCartCount();
+    </script>
+
+
+    <script src="ber2.js"></script>
+</body>
+</html>

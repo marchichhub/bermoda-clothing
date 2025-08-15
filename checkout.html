@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <link rel="stylesheet" href="ber2.css">
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <script>
+        (function(){
+            emailjs.init("D1GitYCH4cEuKV0Cv"); // Your public key
+        })();
+    </script>
+</head>
+<body>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="top-left">
+            <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+            <img src="logo.jpg" alt="Logo">
+            <input type="text" class="search-box" placeholder="Search...">
+        </div>
+        <div class="cart-icon" onclick="toggleCart()">
+            🛒 <span id="cart-count">0</span>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar hidden" id="sidebar">
+        <h2>Menu</h2>
+        <a href="ber2.html">Home</a>
+        <a href="shirts.html">Shirts</a>
+        <a href="pants.html">Pants</a>
+        <a href="shoes.html">Shoes</a>
+        <a href="hats.html">Hats</a>
+        <a href="cart1.html">View Cart</a>
+    </div>
+
+    <!-- Checkout Content -->
+    <div class="content" style="padding:100px 20px;max-width:900px;margin:auto;">
+        <h1>Checkout</h1>
+        <h3>Order Summary</h3>
+        <table style="width:100%;border-collapse:collapse;margin-bottom:20px;" id="order-summary">
+            <thead>
+                <tr style="background:#FFD700;">
+                    <th style="padding:8px;">Item</th>
+                    <th>Size</th>
+                    <th>Color</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot>
+                <tr style="font-weight:bold;">
+                    <td colspan="4" style="text-align:right;padding:8px;">Total:</td>
+                    <td id="total-price"></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <h3>Shipping Details</h3>
+        <form id="checkout-form">
+            <input type="text" name="name" placeholder="Full Name" required style="width:100%;padding:10px;margin-bottom:10px;">
+            <input type="text" name="address" placeholder="Address" required style="width:100%;padding:10px;margin-bottom:10px;">
+            <input type="tel" name="phone" placeholder="Phone Number" required style="width:100%;padding:10px;margin-bottom:10px;">
+            <button type="submit" style="width:100%;padding:12px;background:#FFD700;color:#000;font-weight:bold;border:none;border-radius:6px;cursor:pointer;">Place Order</button>
+        </form>
+        <p id="confirmation" style="color:green;font-weight:bold;margin-top:15px;display:none;">Your order has been placed successfully!</p>
+    </div>
+
+    <script src="ber2.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCartCount();
+            loadSummary();
+        });
+
+        function loadSummary() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const tbody = document.querySelector('#order-summary tbody');
+            tbody.innerHTML = '';
+            let total = 0;
+            cart.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td style="padding:8px;">${item.name}</td>
+                    <td>${item.size}</td>
+                    <td>${item.color}</td>
+                    <td>${item.quantity}</td>
+                    <td>${item.price} DH</td>
+                `;
+                tbody.appendChild(row);
+                total += item.price * item.quantity;
+            });
+            document.getElementById('total-price').textContent = total + " DH";
+        }
+
+        document.getElementById('checkout-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            if (cart.length === 0) {
+                alert("Your cart is empty!");
+                return;
+            }
+            const formData = new FormData(this);
+            const name = formData.get('name');
+            const address = formData.get('address');
+            const phone = formData.get('phone');
+            const total = document.getElementById('total-price').textContent;
+
+            let orderDetails = cart.map(item => `${item.name} - Size: ${item.size}, Color: ${item.color}, Qty: ${item.quantity}, Price: ${item.price} DH`).join('\n');
+
+            const templateParams = {
+                name: name,
+                address: address,
+                phone: phone,
+                order: orderDetails,
+                total: total
+            };
+
+            const serviceID = "service_bvdetnm";
+            const templateID = "template_2srb49t";
+
+            emailjs.send(serviceID, templateID, templateParams)
+                .then(() => {
+                    document.getElementById('confirmation').style.display = 'block';
+                    localStorage.removeItem('cart');
+                    updateCartCount();
+                    loadSummary();
+                    document.getElementById('checkout-form').reset();
+                }, (err) => {
+                    alert("Failed to send order: " + JSON.stringify(err));
+                });
+        });
+    </script>
+
+</body>
+</html>
